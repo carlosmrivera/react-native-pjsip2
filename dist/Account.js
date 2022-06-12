@@ -9,6 +9,15 @@ export default class Account {
     this._registration = new AccountRegistration(data['registration']);
   }
   /**
+   * The account Data.
+   * @returns {Object}
+   */
+
+
+  getData() {
+    return this._data;
+  }
+  /**
    * The account ID.
    * @returns {int}
    */
@@ -16,15 +25,6 @@ export default class Account {
 
   getId() {
     return this._data.id;
-  }
-  /**
-   * The account Data.
-   * @returns {Object}
-   */
-
-
-   getData() {
-    return this._data;
   }
   /**
    * This is the URL to be put in the request URI for the registration, and will look something like "sip:serviceprovider".

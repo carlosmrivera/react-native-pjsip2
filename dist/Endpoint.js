@@ -1,5 +1,4 @@
-import { DeviceEventEmitter, NativeModules } from 'react-native';
-import { EventEmitter } from 'events';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 import Call from './Call';
 import Message from './Message';
 import Account from './Account';
@@ -40,18 +39,19 @@ import Account from './Account';
  * @property {number} aud_cnt - Number of simultaneous active audio streams for this call. Setting this to zero will disable audio in this call.
  * @property {number} vid_cnt - Number of simultaneous active video streams for this call. Setting this to zero will disable video in this call.
  */
-export default class Endpoint extends EventEmitter {
+export default class Endpoint extends NativeEventEmitter {
   constructor() {
-    super(); // Subscribe to Accounts events
+    super();
+    this.pjsipEmitter = new NativeEventEmitter(NativeModules.PjSipModule); // Subscribe to Accounts events
 
-    DeviceEventEmitter.addListener('pjSipRegistrationChanged', this._onRegistrationChanged.bind(this)); // Subscribe to Calls events
+    this.pjsipEmitter.addListener('pjSipRegistrationChanged', this._onRegistrationChanged.bind(this)); // Subscribe to Calls events
 
-    DeviceEventEmitter.addListener('pjSipCallReceived', this._onCallReceived.bind(this));
-    DeviceEventEmitter.addListener('pjSipCallChanged', this._onCallChanged.bind(this));
-    DeviceEventEmitter.addListener('pjSipCallTerminated', this._onCallTerminated.bind(this));
-    DeviceEventEmitter.addListener('pjSipCallScreenLocked', this._onCallScreenLocked.bind(this));
-    DeviceEventEmitter.addListener('pjSipMessageReceived', this._onMessageReceived.bind(this));
-    DeviceEventEmitter.addListener('pjSipConnectivityChanged', this._onConnectivityChanged.bind(this));
+    this.pjsipEmitter.addListener('pjSipCallReceived', this._onCallReceived.bind(this));
+    this.pjsipEmitter.addListener('pjSipCallChanged', this._onCallChanged.bind(this));
+    this.pjsipEmitter.addListener('pjSipCallTerminated', this._onCallTerminated.bind(this));
+    this.pjsipEmitter.addListener('pjSipCallScreenLocked', this._onCallScreenLocked.bind(this));
+    this.pjsipEmitter.addListener('pjSipMessageReceived', this._onMessageReceived.bind(this));
+    this.pjsipEmitter.addListener('pjSipConnectivityChanged', this._onConnectivityChanged.bind(this));
   }
   /**
    * Returns a Promise that will be resolved once PjSip module is initialized.
@@ -725,7 +725,7 @@ export default class Endpoint extends EventEmitter {
       if (!realm) {
         realm = account.getDomain();
         /*let s = realm.indexOf(":");
-         if (s > 0) {
+          if (s > 0) {
             realm = realm.substr(0, s + 1);
         }*/
       }
