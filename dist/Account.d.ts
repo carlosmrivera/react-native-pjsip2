@@ -23,6 +23,11 @@ export default class Account {
     _registration: AccountRegistration;
     constructor(data: any);
     /**
+     * The account Data.
+     * @returns {Object}
+     */
+     getData(): Object;
+    /**
      * The account ID.
      * @returns {int}
      */
