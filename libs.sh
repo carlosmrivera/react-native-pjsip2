@@ -1,6 +1,7 @@
 #!/bin/bash
 # comment
 set  -e
+
 VERSION="v2.8.1"
 URL="https://github.com/ingcarlosmrivera/react-native-pjsip-builder/releases/download/${VERSION}/release.tar.gz"
 LOCK=".libs.lock"
