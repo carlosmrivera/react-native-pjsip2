@@ -1,4 +1,4 @@
-import React, {DeviceEventEmitter, NativeModules} from 'react-native';
+import React, {NativeEventEmitter, DeviceEventEmitter, NativeModules} from 'react-native';
 import {EventEmitter} from 'events'
 
 import Call, { CallData } from './Call'
@@ -46,21 +46,24 @@ export type EndpointConfiguration = {
  * @property {number} vid_cnt - Number of simultaneous active video streams for this call. Setting this to zero will disable video in this call.
  */
 
-export default class Endpoint extends EventEmitter {
+export default class Endpoint extends NativeEventEmitter {
+    pjsipEmitter: React.NativeEventEmitter;
 
     constructor() {
         super();
 
+        this.pjsipEmitter = new NativeEventEmitter(NativeModules.PjSipModule);
+
         // Subscribe to Accounts events
-        DeviceEventEmitter.addListener('pjSipRegistrationChanged', this._onRegistrationChanged.bind(this));
+        this.pjsipEmitter.addListener('pjSipRegistrationChanged', this._onRegistrationChanged.bind(this));
 
         // Subscribe to Calls events
-        DeviceEventEmitter.addListener('pjSipCallReceived', this._onCallReceived.bind(this));
-        DeviceEventEmitter.addListener('pjSipCallChanged', this._onCallChanged.bind(this));
-        DeviceEventEmitter.addListener('pjSipCallTerminated', this._onCallTerminated.bind(this));
-        DeviceEventEmitter.addListener('pjSipCallScreenLocked', this._onCallScreenLocked.bind(this));
-        DeviceEventEmitter.addListener('pjSipMessageReceived', this._onMessageReceived.bind(this));
-        DeviceEventEmitter.addListener('pjSipConnectivityChanged', this._onConnectivityChanged.bind(this));
+        this.pjsipEmitter.addListener('pjSipCallReceived', this._onCallReceived.bind(this));
+        this.pjsipEmitter.addListener('pjSipCallChanged', this._onCallChanged.bind(this));
+        this.pjsipEmitter.addListener('pjSipCallTerminated', this._onCallTerminated.bind(this));
+        this.pjsipEmitter.addListener('pjSipCallScreenLocked', this._onCallScreenLocked.bind(this));
+        this.pjsipEmitter.addListener('pjSipMessageReceived', this._onMessageReceived.bind(this));
+        this.pjsipEmitter.addListener('pjSipConnectivityChanged', this._onConnectivityChanged.bind(this));
     }
 
     /**
